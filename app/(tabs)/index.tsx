@@ -12,6 +12,7 @@ export default function Index() {
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined
   );
+  const [prediction, setPrediction] = useState()
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -27,6 +28,28 @@ export default function Index() {
     }
   };
 
+  const uploadImage = async (uri: string) => {
+    try {
+      const formData = new FormData();
+      formData.append('image', {
+        uri, type: 'image/jpeg', name: 'dog.jpg'
+      } as any)
+      const response = await fetch('http://localhost:3000/predict', {
+        method: 'POST',
+        body: formData,
+        headers: {'Content-type': 'multipart/form-data'}
+      })
+      const result = await response.json();
+      if (result.success) {
+        setPrediction(result.predictions)
+        console.log(prediction);
+      }
+    } catch (error) {
+      console.error('Error: ', error)
+      alert('Upload failed.')
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -41,7 +64,7 @@ export default function Index() {
           label="Choose a photo"
           onPress={pickImageAsync}
         />
-        <Button label="Use this photo" />
+        <Button label="Use this photo"/>
       </View>
     </View>
   );
