@@ -3,6 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import Button from "@/components/Button";
 import ImageViewer from "@/components/ImageViewer";
+import CameraComponent from "@/components/Camera";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
 
@@ -10,6 +11,7 @@ export default function Index() {
   const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
   const [prediction, setPrediction] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -22,6 +24,11 @@ export default function Index() {
     } else {
       alert("You did not select an image.");
     }
+  };
+
+  const handlePhotoCapture = (photo: any) => {
+    setSelectedImage(photo.uri);
+    setShowCamera(false);
   };
 
   const uploadImage = async () => {
@@ -64,6 +71,10 @@ export default function Index() {
     }
   };
 
+  if (showCamera) {
+    return <CameraComponent onPhotoCapture={handlePhotoCapture} />;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -73,11 +84,18 @@ export default function Index() {
         />
       </View>
       <View style={styles.footerContainer}>
-        <Button
-          theme="primary"
-          label="Choose a photo"
-          onPress={pickImageAsync}
-        />
+        <View style={styles.buttonGroup}>
+          <Button
+            theme="primary"
+            label="Choose a photo"
+            onPress={pickImageAsync}
+          />
+          <Button
+            theme="primary"
+            label="Take a photo"
+            onPress={() => setShowCamera(true)}
+          />
+        </View>
         <Button 
           label={isLoading ? "Predicting..." : "Predict Breed"}
           onPress={uploadImage}
@@ -107,6 +125,10 @@ const styles = StyleSheet.create({
   footerContainer: {
     flex: 1 / 3,
     alignItems: "center",
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    gap: 10,
   },
   predictionContainer: {
     marginTop: 20,
