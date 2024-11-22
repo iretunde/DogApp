@@ -1,7 +1,6 @@
-import { View, StyleSheet, Text, ScrollView } from "react-native";
+import { View, StyleSheet, Text, ScrollView, Platform } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
-import { Client } from "@gradio/client";
 import Button from "@/components/Button";
 import ImageViewer from "@/components/ImageViewer";
 
@@ -26,26 +25,41 @@ export default function Index() {
   };
 
   const uploadImage = async () => {
-    if (!selectedImage) {
-      alert("Please select an image first.");
-      return;
-    }
-
+    if (!selectedImage) return alert("Select image first");
+  
     setIsLoading(true);
     try {
-      const response = await fetch(selectedImage);
-      const blob = await response.blob();
-
-      const client = await Client.connect("Sorei9240/dog-breed-id-model");
-      const result = await client.predict("/predict", { 
-        image: blob,
+      const formData = new FormData();
+  
+      if (Platform.OS === 'web') {
+        const response = await fetch(selectedImage);
+        const blob = await response.blob();
+        formData.append('file', blob, 'image.jpg');
+      } else {
+        formData.append('file', {
+          uri: Platform.OS === 'ios' ? selectedImage.replace('file://', '') : selectedImage,
+          type: 'image/jpeg',
+          name: 'image.jpg'
+        });
+      }
+  
+      const result = await fetch('https://sorei9240-dog-id-api.hf.space/predict', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json',
+        }
       });
-
-      console.log(result);
-      setPrediction(result.data);
+      
+      if (!result.ok) {
+        const error = await result.text();
+        throw new Error(error);
+      }
+      
+      setPrediction((await result.json()).predictions);
     } catch (error) {
-      console.error('Error:', error);
-      alert('Prediction failed.');
+      console.error(error);
+      alert('Failed: ' + error.message);
     } finally {
       setIsLoading(false);
     }
