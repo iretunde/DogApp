@@ -40,7 +40,7 @@ export default function Index() {
           uri: Platform.OS === 'ios' ? selectedImage.replace('file://', '') : selectedImage,
           type: 'image/jpeg',
           name: 'image.jpg'
-        });
+        } as any);
       }
   
       const result = await fetch('https://sorei9240-dog-id-api.hf.space/predict', {
@@ -55,9 +55,8 @@ export default function Index() {
         const error = await result.text();
         throw new Error(error);
       }
-      
       setPrediction((await result.json()).predictions);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       alert('Failed: ' + error.message);
     } finally {
