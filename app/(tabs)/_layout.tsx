@@ -1,5 +1,4 @@
 import { Tabs } from "expo-router";
-
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function TabLayout() {
@@ -18,9 +17,23 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="saved-dogs"
         options={{
-          title: "Home",
+          headerShown: false, 
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+            name={focused ? "bookmark" : "bookmark-outline"}
+            color={color}
+            size={24}
+            />
+          ),
+        }}
+        />
+      
+      <Tabs.Screen
+        name="home"
+        options={{
+          headerShown: false, 
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "home-sharp" : "home-outline"}
@@ -30,15 +43,14 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
-        name="about"
+        name="camera"
         options={{
-          title: "About",
+          headerShown: false, // Hide the title in the header
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
+              name="camera"
               color={color}
               size={24}
             />

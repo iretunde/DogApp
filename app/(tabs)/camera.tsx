@@ -7,7 +7,7 @@ import CameraComponent from "@/components/Camera";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
 
-export default function Index() {
+export default function Camera() {
   const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
   const [prediction, setPrediction] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
@@ -89,18 +89,27 @@ export default function Index() {
             theme="primary"
             label="Choose a photo"
             onPress={pickImageAsync}
+            style={styles.button}
           />
           <Button
             theme="primary"
             label="Take a photo"
             onPress={() => setShowCamera(true)}
+            style={styles.button}
           />
         </View>
+        
+        {/* Add some space here between the buttons */}
+        <View style={styles.spaceBetweenButtons}></View>
+        
+        {/* Predict Breed button */}
         <Button 
           label={isLoading ? "Predicting..." : "Predict Breed"}
           onPress={uploadImage}
           disabled={isLoading || !selectedImage}
+          style={styles.predictButton} // Apply custom style to this button
         />
+        
         {prediction && (
           <ScrollView style={styles.predictionContainer}>
             <Text style={styles.predictionText}>
@@ -118,17 +127,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#25292e",
     alignItems: "center",
+    paddingTop: 50, // Adjusted padding for the top of the screen
   },
   imageContainer: {
     flex: 1,
+    marginBottom: 0, // Removed margin to make the buttons appear directly below the image
   },
   footerContainer: {
     flex: 1 / 3,
     alignItems: "center",
+    paddingTop: 0, // Removed paddingTop to reduce gap between image and buttons
   },
   buttonGroup: {
-    flexDirection: 'row',
-    gap: 10,
+    flexDirection: 'column', // Stack buttons vertically
+    alignItems: 'center', // Center buttons horizontally
+    gap: 5, // Reduced gap to bring buttons closer together
+    width: '80%', // Limit width of button group to ensure it stays within bounds
+  },
+  button: {
+    width: '100%', // Make buttons take up the full width of the button group
+  },
+
+  spaceBetweenButtons: {
+    height: 5, // Reduced height for smaller gap
   },
   predictionContainer: {
     marginTop: 20,
@@ -141,7 +162,7 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 16,
   },
+  predictButton: {
+    marginTop: 10,  // Reduced margin to bring button closer
+  },
 });
-
-// {"assets": [{"assetId": null, "base64": null, "duration": null, "exif": null, "fileName": null, "fileSize": 359362, "height": 1000, "mimeType": "image/jpeg", "pairedVideoAsset": null, "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/EE19CCEE-A353-4CC1-93AC-CEF1595F9C3E/Library/Caches/ExponentExperienceData/@anonymous/MyNewApp-3abaffea-e108-483d-bbd4-e73c7ce01ece/ImagePicker/9A2A2ECB-CC92-481C-8080-C6EC49A95DD3.jpg", "width": 1000}], "canceled": false}
-//this is the object :D
