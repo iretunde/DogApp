@@ -1,21 +1,10 @@
-import { Text, View, StyleSheet } from "react-native";
+import { View } from 'react-native';
+import SavedDogsComponent from '@/components/SavedDogs';
 
-export default function SavedDogs() {
+export default function SavedDogsScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Saved Dogs</Text>
+    <View className="flex-1">
+      <SavedDogsComponent />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ADD8E6", // Same background color as login screen
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    color: "#fff",
-  },
-});
