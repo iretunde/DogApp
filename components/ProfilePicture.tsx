@@ -4,6 +4,7 @@ import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { editUserAvatar } from "@/api";
+import { useAuth } from '@/contexts/AuthContext';
 
 type Props = {
   imageUri: string;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function ProfilePicture({ imageUri, onEditPress }: Props) {
+  const { userId } = useAuth();
   const [isUploading, setIsUploading] = useState(false);
 
   const pickImage = async () => {
@@ -36,7 +38,7 @@ export default function ProfilePicture({ imageUri, onEditPress }: Props) {
             name: "avatar.jpg",
           };
 
-      const updatedUser = await editUserAvatar(1, imageFile);
+      const updatedUser = await editUserAvatar(Number(userId), imageFile);
       onEditPress(updatedUser.avatar_url);
     } catch (error: any) {
       console.error(error);

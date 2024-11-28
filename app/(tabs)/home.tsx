@@ -7,7 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ProfilePicture from "@/components/ProfilePicture";
 import { useState, useEffect } from "react";
 import { getUser, getLeaderboard } from "@/api";
-import { useRouter } from "expo-router";
+
+import { useAuth } from '@/contexts/AuthContext';
 
 type Props = {
   imageUri: string;
@@ -23,12 +24,15 @@ type LeaderboardEntry = {
 };
 
 export default function Home() {
-  const router = useRouter();
+
+  const { userId } = useAuth();
+        
   const [profileImage, setProfileImage] = useState("");
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
   const loadUserProfile = async () => {
-    const userData = await getUser(1);
+    if (!userId) return;
+    const userData = await getUser(Number(userId));
     setProfileImage(userData.avatar_url);
   };
 
@@ -44,7 +48,7 @@ export default function Home() {
   useEffect(() => {
     loadUserProfile();
     loadLeaderboard();
-  }, []);
+  }, [userId]);
 
   const handleLeaderboardPress = (userId: number) => {
     router.push({

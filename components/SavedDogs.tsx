@@ -1,7 +1,8 @@
-import { View, Text, FlatList, Image } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useState } from "react";
-import { getDogPicsByUser, getUser } from "@/api";
+import { View, Text, FlatList, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useEffect, useState } from 'react';
+import { getDogPicsByUser, getUser } from '@/api';
+import { useAuth } from '@/contexts/AuthContext'
 
 type DogPicture = {
   picture_id: number;
@@ -16,23 +17,19 @@ type Props = {
   isOwnProfile?: boolean;
 };
 
-export default function SavedDogsComponent({
-  userId = 1,
-  isOwnProfile = true,
-}: Props) {
+
+export default function SavedDogsComponent() {
+  const { userId } = useAuth();
   const [dogPictures, setDogPictures] = useState<DogPicture[]>([]);
   const [username, setUsername] = useState<string>("");
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [picturesResponse, userData] = await Promise.all([
-          getDogPicsByUser(userId),
-          getUser(userId),
-        ]);
+    if (!userId) return;
 
-        setDogPictures(picturesResponse);
-        setUsername(userData.username);
+    const fetchDogPictures = async () => {
+      try {
+        const response = await getDogPicsByUser(Number(userId));
+        setDogPictures(response);
       } catch (err) {
         console.error("Error:", err);
       }
