@@ -1,10 +1,11 @@
-import { View, Text } from "react-native"; //stylesheet in here if changed from tailwind, i have the styles saved in my notes
-import Logout from '@/components/Logout';
+import { View, Text, TouchableOpacity } from "react-native"; //stylesheet in here if changed from tailwind, i have the styles saved in my notes
+import Logout from "@/components/Logout";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ProfilePicture from "@/components/ProfilePicture";
 import { useState, useEffect } from "react";
 import { getUser, getLeaderboard } from "@/api";
+import { useRouter } from "expo-router";
 
 type LeaderboardEntry = {
   user_id: number;
@@ -15,6 +16,7 @@ type LeaderboardEntry = {
 };
 
 export default function Home() {
+  const router = useRouter();
   const [profileImage, setProfileImage] = useState("");
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
@@ -33,6 +35,13 @@ export default function Home() {
     loadLeaderboard();
   }, []);
 
+  const handleLeaderboardPress = (userId: number) => {
+    router.push({
+      pathname: "/(tabs)/saved-dogs",
+      params: { userId: userId },
+    });
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-gray-900">
       <ScrollView>
@@ -47,8 +56,9 @@ export default function Home() {
 
         <View className="w-full md:w-[50%] self-center">
           {leaderboard.map((entry, index) => (
-            <View
+            <TouchableOpacity
               key={entry.user_id}
+              onPress={() => handleLeaderboardPress(entry.user_id)}
               className="bg-gray-800 rounded-xl mb-4 p-4 mx-4 flex-row justify-between items-center"
             >
               {/* Rank Display */}
@@ -78,7 +88,7 @@ export default function Home() {
                 </Text>
                 <Text className="text-white/80 text-sm">points</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
