@@ -4,6 +4,8 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import ImageViewer from "@/components/ImageViewer";
 import CameraComponent from "@/components/Camera";
+import Logout from "@/components/Logout";
+import ResetPicture from "@/components/ResetPicture";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
 
@@ -21,15 +23,17 @@ export default function Camera() {
 
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
-    } else {
-      alert("You did not select an image.");
-    }
+    } 
   };
 
   const handlePhotoCapture = (photo: any) => {
     setSelectedImage(photo.uri);
     setShowCamera(false);
   };
+
+  const handleResetPicture = () => {
+    setSelectedImage(undefined)
+  }
 
   const uploadImage = async () => {
     if (!selectedImage) return alert("Select image first");
@@ -77,6 +81,7 @@ export default function Camera() {
 
   return (
     <View style={styles.container}>
+      <Logout></Logout>
       <View style={styles.imageContainer}>
         <ImageViewer
           imgSource={PlaceholderImage}
@@ -91,25 +96,27 @@ export default function Camera() {
             onPress={pickImageAsync}
             style={styles.button}
           />
+          
+          {/* ResetPicture positioned using flexbox for better responsiveness */}
+          <View style={styles.resetButtonContainer}>
+          </View>
+
           <Button
             theme="primary"
             label="Take a photo"
             onPress={() => setShowCamera(true)}
-            style={styles.button}
+            style={[styles.button, styles.buttonSpacing]} // Reduced spacing
           />
         </View>
-        
-        {/* Add some space here between the buttons */}
-        <View style={styles.spaceBetweenButtons}></View>
-        
-        {/* Predict Breed button */}
+
         <Button 
           label={isLoading ? "Predicting..." : "Predict Breed"}
           onPress={uploadImage}
           disabled={isLoading || !selectedImage}
-          style={styles.predictButton} // Apply custom style to this button
+          style={styles.predictButton}
         />
-        
+        <ResetPicture onPress={handleResetPicture} />
+
         {prediction && (
           <ScrollView style={styles.predictionContainer}>
             <Text style={styles.predictionText}>
@@ -127,29 +134,37 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#25292e",
     alignItems: "center",
-    paddingTop: 50, // Adjusted padding for the top of the screen
+    paddingTop: 50,
   },
   imageContainer: {
-    flex: 1,
-    marginBottom: 0, // Removed margin to make the buttons appear directly below the image
+    marginBottom: 20, // Space between the image and buttons
   },
   footerContainer: {
-    flex: 1 / 3,
+    width: "100%", 
     alignItems: "center",
-    paddingTop: 0, // Removed paddingTop to reduce gap between image and buttons
+    paddingHorizontal: 20,
   },
   buttonGroup: {
-    flexDirection: 'column', // Stack buttons vertically
-    alignItems: 'center', // Center buttons horizontally
-    gap: 5, // Reduced gap to bring buttons closer together
-    width: '80%', // Limit width of button group to ensure it stays within bounds
+    flexDirection: "column", 
+    alignItems: "center", 
+    gap: 0.1, // Reduced gap between buttons
+    width: "80%",
+    marginBottom: 10,
   },
   button: {
-    width: '100%', // Make buttons take up the full width of the button group
+    paddingHorizontal: 20, // Add horizontal padding for content
+    alignItems: "center",  // Center the text inside the button
   },
-
-  spaceBetweenButtons: {
-    height: 5, // Reduced height for smaller gap
+  buttonSpacing: {
+    marginTop: 1, // Reduced space between buttons
+  },
+  resetButtonContainer: {
+    // Use flexbox to make positioning work better on both web and mobile
+    marginTop: 10,
+    marginLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row', // Ensure buttons are placed side by side
   },
   predictionContainer: {
     marginTop: 20,
@@ -163,6 +178,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   predictButton: {
-    marginTop: 10,  // Reduced margin to bring button closer
+    marginTop: 30,
+    paddingHorizontal: 20, // Ensures consistent padding for this button too
   },
 });
