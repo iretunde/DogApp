@@ -1,8 +1,8 @@
 import { View, Text, FlatList, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
-import { getDogPicsByUser } from '@/api';
-import { useAuth } from '@/contexts/AuthContext';
+import { getDogPicsByUser, getUser } from '@/api';
+import { useAuth } from '@/contexts/AuthContext'
 
 type DogPicture = {
   picture_id: number;
@@ -14,11 +14,14 @@ type DogPicture = {
 
 type Props = {
   userId?: number;
+  isOwnProfile?: boolean;
 };
+
 
 export default function SavedDogsComponent() {
   const { userId } = useAuth();
   const [dogPictures, setDogPictures] = useState<DogPicture[]>([]);
+  const [username, setUsername] = useState<string>("");
 
   useEffect(() => {
     if (!userId) return;
@@ -28,18 +31,18 @@ export default function SavedDogsComponent() {
         const response = await getDogPicsByUser(Number(userId));
         setDogPictures(response);
       } catch (err) {
-        console.error('Error:', err);
+        console.error("Error:", err);
       }
     };
 
-    fetchDogPictures();
+    fetchData();
   }, [userId]);
 
   const renderDogItem = ({ item }: { item: DogPicture }) => (
     <View className="bg-gray-800 rounded-xl mb-4 p-4 mx-4 flex-row justify-between items-center">
       {item.image_url ? (
         <View className="w-40 aspect-square rounded-lg overflow-hidden">
-          <Image 
+          <Image
             source={{ uri: item.image_url }}
             className="w-full h-full"
             resizeMode="cover"
@@ -50,10 +53,10 @@ export default function SavedDogsComponent() {
           <Text className="text-gray-400">No Image</Text>
         </View>
       )}
-      
+
       <View className="items-end">
         <Text className="text-white text-lg font-semibold">
-          {item.first_guess_breed.replace(/_/g, ' ')}
+          {item.first_guess_breed.replace(/_/g, " ")}
         </Text>
         <Text className="text-white/80 mt-1">
           {item.first_guess_confidence.toFixed(1)}% confidence
@@ -65,13 +68,15 @@ export default function SavedDogsComponent() {
   return (
     <SafeAreaView className="flex-1 bg-gray-900">
       <Text className="text-white text-2xl font-bold text-center py-4">
-        Your Saved Dogs ({dogPictures.length})
+        {isOwnProfile
+          ? `Your Saved Dogs (${dogPictures.length})`
+          : `${username}'s Saved Dogs (${dogPictures.length})`}
       </Text>
       <View className="w-full md:w-[50%] self-center flex-1">
         <FlatList
           data={dogPictures}
           renderItem={renderDogItem}
-          keyExtractor={item => item.picture_id.toString()}
+          keyExtractor={(item) => item.picture_id.toString()}
         />
       </View>
     </SafeAreaView>

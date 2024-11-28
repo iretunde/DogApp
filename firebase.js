@@ -9,7 +9,7 @@ const firebaseConfig = {
   projectId: "dogappauthentication",
   storageBucket: "dogappauthentication.firebasestorage.app",
   messagingSenderId: "862222697582",
-  appId: "1:862222697582:web:f8cecdf9daded2d4b4527f"
+  appId: "1:862222697582:web:f8cecdf9daded2d4b4527f",
 };
 
 // Initialize Firebase

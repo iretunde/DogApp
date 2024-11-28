@@ -80,6 +80,7 @@ export default function Camera() {
         paddingTop: Math.max(insets.top, 16),
       }}
     >
+      <Logout />
       {selectedImage && predictions.length > 0 ? (
         <DogID image={selectedImage} predictions={predictions} />
       ) : (
@@ -109,6 +110,7 @@ export default function Camera() {
               disabled={isLoading || !selectedImage}
             />
           </View>
+          <ResetPicture onPress={handleResetPicture} />
         </View>
       )}
     </View>
