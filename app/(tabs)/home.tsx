@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet } from "react-native";
 import ProfilePicture from "@/components/ProfilePicture";
 import { useState, useEffect } from "react";
-import { fetchUserProfile } from "@/api";
+import { getUser } from "@/api";
 
 export default function Home() {
   const [profileImage, setProfileImage] = useState("");
   useEffect(() => {
     const loadUserProfile = async () => {
-      const userData = await fetchUserProfile();
+      const userData = await getUser(1);
       setProfileImage(userData.avatar_url);
     };
 

@@ -13,7 +13,7 @@ const PlaceholderImage = require("@/assets/images/background-image.png");
 type Prediction = {
   breed: string;
   confidence: number;
-}
+};
 
 export default function Camera() {
   const insets = useSafeAreaInsets();
@@ -42,19 +42,23 @@ export default function Camera() {
     if (!selectedImage) return;
     setIsLoading(true);
     try {
-      let imageFile = Platform.OS === 'web' ? 
-        await (await fetch(selectedImage)).blob() :
-        {
-          uri: Platform.OS === 'ios' ? selectedImage.replace('file://', '') : selectedImage,
-          type: 'image/jpeg',
-          name: 'image.jpg'
-        };
-  
+      let imageFile =
+        Platform.OS === "web"
+          ? await (await fetch(selectedImage)).blob()
+          : {
+              uri:
+                Platform.OS === "ios"
+                  ? selectedImage.replace("file://", "")
+                  : selectedImage,
+              type: "image/jpeg",
+              name: "image.jpg",
+            };
+
       const result = await predictBreed(imageFile);
       setPredictions(result.data.predictions.predictions);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert('Failed: ' + error.message);
+      alert("Failed: " + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -65,10 +69,10 @@ export default function Camera() {
   }
 
   return (
-    <View 
+    <View
       className="flex-1 bg-gray-900"
-      style={{ 
-        paddingTop: Math.max(insets.top, 16)
+      style={{
+        paddingTop: Math.max(insets.top, 16),
       }}
     >
       {selectedImage && predictions.length > 0 ? (
@@ -94,7 +98,7 @@ export default function Camera() {
               onPress={() => setShowCamera(true)}
             />
             <View style={{ height: 12 }} />
-            <Button 
+            <Button
               label={isLoading ? "Predicting..." : "Predict Breed"}
               onPress={uploadImage}
               disabled={isLoading || !selectedImage}

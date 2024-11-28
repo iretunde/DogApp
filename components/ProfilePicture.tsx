@@ -10,11 +10,13 @@ type Props = {
 export default function ProfilePicture({ imageUri, onEditPress }: Props) {
   return (
     <View style={styles.container}>
+      {/* <View style={styles.imageContainer}> */}
       <Image
         source={{ uri: imageUri }}
         style={styles.image}
         contentFit="cover"
       />
+      {/* </View> */}
       <TouchableOpacity style={styles.editButton} onPress={onEditPress}>
         <AntDesign name="edit" size={20} color="white" />
       </TouchableOpacity>
@@ -27,10 +29,20 @@ const styles = StyleSheet.create({
     position: "relative",
     width: 100,
     height: 100,
+    // borderWidth: 2,
   },
+  // imageContainer: {
+  //   position: "relative",
+  //   width: 100,
+  //   height: 100,
+  //   borderWidth: 2,
+  //   borderColor: "#F00",
+  //   borderRadius: 50,
+  // },
   image: {
     width: 100,
     height: 100,
+    resizeMode: "stretch",
     borderRadius: 50,
   },
   editButton: {
