@@ -5,20 +5,28 @@ import { getUser } from "@/api";
 
 export default function Home() {
   const [profileImage, setProfileImage] = useState("");
-  useEffect(() => {
-    const loadUserProfile = async () => {
-      const userData = await getUser(1);
-      setProfileImage(userData.avatar_url);
-    };
 
+  useEffect(() => {
     loadUserProfile();
   }, []);
+
+  const loadUserProfile = async () => {
+    const userData = await getUser(1);
+    setProfileImage(userData.avatar_url);
+  };
+
+  const handleAvatarUpdate = (newAvatarUrl: string) => {
+    setProfileImage(newAvatarUrl);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.profileSection}>
-          <ProfilePicture imageUri={profileImage} onEditPress={() => {}} />
+          <ProfilePicture 
+            imageUri={profileImage} 
+            onEditPress={handleAvatarUpdate} 
+          />
           <Text style={styles.welcomeText}>Welcome!</Text>
         </View>
       </View>
