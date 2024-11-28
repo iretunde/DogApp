@@ -9,6 +9,7 @@ import Logout from "@/components/Logout";
 import ResetPicture from "@/components/ResetPicture"
 import DogID from "@/components/DogID";
 import { predictBreed } from "@/api";
+import { useAuth } from '@/contexts/AuthContext';
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
 
@@ -18,6 +19,7 @@ type Prediction = {
 };
 
 export default function Camera() {
+  const { userId } = useAuth();
   const insets = useSafeAreaInsets();
   const [selectedImage, setSelectedImage] = useState<string>();
   const [predictions, setPredictions] = useState<Prediction[]>([]);
@@ -46,22 +48,18 @@ export default function Camera() {
   }
 
   const uploadImage = async () => {
-    if (!selectedImage) return;
+    if (!selectedImage || !userId) return;
     setIsLoading(true);
     try {
-      let imageFile =
-        Platform.OS === "web"
-          ? await (await fetch(selectedImage)).blob()
-          : {
-              uri:
-                Platform.OS === "ios"
-                  ? selectedImage.replace("file://", "")
-                  : selectedImage,
-              type: "image/jpeg",
-              name: "image.jpg",
-            };
-
-      const result = await predictBreed(imageFile);
+      let imageFile = Platform.OS === "web"
+        ? await (await fetch(selectedImage)).blob()
+        : {
+            uri: Platform.OS === "ios" ? selectedImage.replace("file://", "") : selectedImage,
+            type: "image/jpeg",
+            name: "image.jpg",
+          };
+  
+      const result = await predictBreed(imageFile, userId);
       setPredictions(result.data.predictions.predictions);
     } catch (error: any) {
       console.error(error);

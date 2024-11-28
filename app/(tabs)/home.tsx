@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ProfilePicture from "@/components/ProfilePicture";
 import { useState, useEffect } from "react";
 import { getUser, getLeaderboard } from "@/api";
+import { useAuth } from '@/contexts/AuthContext';
 
 type Props = {
   imageUri: string;
@@ -20,11 +21,13 @@ type LeaderboardEntry = {
 };
 
 export default function Home() {
+  const { userId } = useAuth();
   const [profileImage, setProfileImage] = useState("");
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
   const loadUserProfile = async () => {
-    const userData = await getUser(1);
+    if (!userId) return;
+    const userData = await getUser(Number(userId));
     setProfileImage(userData.avatar_url);
   };
 
@@ -40,7 +43,7 @@ export default function Home() {
   useEffect(() => {
     loadUserProfile();
     loadLeaderboard();
-  }, []);
+  }, [userId]);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-900">

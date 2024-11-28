@@ -1,8 +1,10 @@
 import { Stack } from "expo-router";
+import { AuthProvider } from '@/contexts/AuthContext';
 import "../global.css"
 
 export default function RootLayout() {
   return (
+    <AuthProvider>
     <Stack>
       <Stack.Screen 
         name="(auth)/index" 
@@ -24,5 +26,6 @@ export default function RootLayout() {
         name="+not-found" 
       />
     </Stack>
+    </AuthProvider>
   );
 }

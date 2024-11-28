@@ -2,6 +2,7 @@ import { View, Text, FlatList, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import { getDogPicsByUser } from '@/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 type DogPicture = {
   picture_id: number;
@@ -15,13 +16,16 @@ type Props = {
   userId?: number;
 };
 
-export default function SavedDogsComponent({ userId = 1 }: Props) {
+export default function SavedDogsComponent() {
+  const { userId } = useAuth();
   const [dogPictures, setDogPictures] = useState<DogPicture[]>([]);
 
   useEffect(() => {
+    if (!userId) return;
+
     const fetchDogPictures = async () => {
       try {
-        const response = await getDogPicsByUser(userId);
+        const response = await getDogPicsByUser(Number(userId));
         setDogPictures(response);
       } catch (err) {
         console.error('Error:', err);

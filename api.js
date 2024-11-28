@@ -30,19 +30,24 @@ export const getDogPicsByUser = async (userId) => {
   return data.dog_pictures;
 };
 
-export const predictBreed = async (imageFile) => {
+export const predictBreed = async (imageFile, userId) => {
   const formData = new FormData();
   formData.append("file", imageFile);
+  formData.append("user_id", userId);
+
   const { data } = await axios.post(`${url}/dog_pictures/predict`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
+    headers: { 
+      "Content-Type": "multipart/form-data",
+    },
   });
   return data;
 };
 
-export const fetchUserProfile = async () => {
-  const response = await api.get("/users/1");
-  return response.data.user;
-};
+
+export const getAuthProfile = async (firebase) => {
+  const response = await axios.get(`${url}/users/firebase/${firebase}`)
+  return response.data.user.user_id
+}
 
 export const getLeaderboard = async () => {
   const { data } = await axios.get(`${url}/users/leaderboard`);
