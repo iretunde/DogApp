@@ -1,13 +1,12 @@
 
 import { View, Text, TouchableOpacity } from "react-native"; //stylesheet in here if changed from tailwind, i have the styles saved in my notes
 import Logout from "@/components/Logout";
-
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ProfilePicture from "@/components/ProfilePicture";
 import { useState, useEffect } from "react";
 import { getUser, getLeaderboard } from "@/api";
-
+import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 
 type Props = {

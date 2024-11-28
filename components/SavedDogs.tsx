@@ -17,26 +17,32 @@ type Props = {
   isOwnProfile?: boolean;
 };
 
-
-export default function SavedDogsComponent() {
-  const { userId } = useAuth();
+export default function SavedDogsComponent({ userId: propUserId, isOwnProfile }: Props) {
+  const { userId: authUserId } = useAuth();
   const [dogPictures, setDogPictures] = useState<DogPicture[]>([]);
   const [username, setUsername] = useState<string>("");
+  
+  const effectiveUserId = propUserId || authUserId;
 
   useEffect(() => {
-    if (!userId) return;
+    if (!effectiveUserId) return;
 
-    const fetchDogPictures = async () => {
+    const fetchDogPics = async () => {
       try {
-        const response = await getDogPicsByUser(Number(userId));
+        const response = await getDogPicsByUser(effectiveUserId);
         setDogPictures(response);
+        
+        if (!isOwnProfile) {
+          const userData = await getUser(effectiveUserId);
+          setUsername(userData.username);
+        }
       } catch (err) {
         console.error("Error:", err);
       }
     };
 
-    fetchData();
-  }, [userId]);
+    fetchDogPics();
+  }, [effectiveUserId, isOwnProfile]);
 
   const renderDogItem = ({ item }: { item: DogPicture }) => (
     <View className="bg-gray-800 rounded-xl mb-4 p-4 mx-4 flex-row justify-between items-center">
