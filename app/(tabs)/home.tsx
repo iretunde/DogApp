@@ -1,4 +1,5 @@
 import { View, Text } from "react-native"; //stylesheet in here if changed from tailwind, i have the styles saved in my notes
+import Logout from '@/components/Logout';
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ProfilePicture from "@/components/ProfilePicture";

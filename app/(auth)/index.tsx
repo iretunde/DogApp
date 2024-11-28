@@ -1,23 +1,45 @@
-import React from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router'; // Import the useRouter hook from expo-router
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase';
+import Ionicons from '@expo/vector-icons/Ionicons'; 
+
+
 
 export default function Login() {
-  const router = useRouter(); // Initialize the router
+  const [email, setEmail] = useState('');
+  const router = useRouter();
+  const [password, setPassword] = useState('');
+  const [isPasswordVisible, setPasswordVisible] = useState(false); 
 
-  // Define the onPress handler for navigating to home screen
-  const handleSubmit = () => {
-    router.push('/(tabs)/home'); // Navigate to /tabs/home, change from /tabs/ignore to /tabs/home
+
+  const handleSubmit = async () => {
+    
+    if (!email.trim()) {
+      Alert.alert('Validation Error', 'Email address cannot be empty.');
+      return;
+    }
+    if (!password.trim()) {
+      Alert.alert('Validation Error', 'Password cannot be empty.');
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const uid = userCredential.user.uid;
+
+      Alert.alert('Success', 'Logged in successfully!');
+      router.push('/(tabs)/home'); 
+    } catch (error: any) {
+      setPassword('')
+      Alert.alert('Error:', 'Email or password incorrect!'); 
+    }
   };
 
-  // Define the onPress handler for navigating to the register screen
-  const handleNavigateToRegister = () => {
-    router.push('./register'); // Navigate to register.tsx in the same folder
-  };
-
-  // Define the onPress handler for navigating to the forgot password screen
+ 
   const handleNavigateToForgotPassword = () => {
-    router.push('./forgot-password'); // Navigate to forgot-password.tsx in the same folder
+    router.push('./forgot-password'); 
   };
 
   return (
@@ -26,24 +48,48 @@ export default function Login() {
 
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Email</Text>
-        <TextInput placeholder="Enter your email" style={styles.input} keyboardType="email-address" />
+        <TextInput
+          placeholder="Enter your email"
+          style={styles.input}
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
       </View>
 
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Password</Text>
-        <TextInput placeholder="Enter your password" style={styles.input} secureTextEntry />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            placeholder="Enter your password"
+            style={styles.passwordInput}
+            secureTextEntry={!isPasswordVisible} // Toggle visibility
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => setPasswordVisible(!isPasswordVisible)}
+          >
+            <Ionicons
+              name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'} 
+              size={20}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
+
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Login</Text>
       </TouchableOpacity>
 
       {/* Add TouchableOpacity for navigation to the Register screen */}
-      <TouchableOpacity onPress={handleNavigateToRegister}>
+      <TouchableOpacity onPress={() => router.push('./register')}>
         <Text style={styles.registerText}>Don't have an account? Register here!</Text>
       </TouchableOpacity>
-
-      {/* Add TouchableOpacity for navigating to the Forgot Password screen */}
+      {/* Forgot Password Link */}
       <TouchableOpacity onPress={handleNavigateToForgotPassword}>
         <Text style={styles.registerText}>Forgot password?</Text>
       </TouchableOpacity>
@@ -66,7 +112,7 @@ const styles = StyleSheet.create({
   },
   inputGroup: {
     flexDirection: 'row',
-    width: '80%',
+    width: '80%', // Ensure email and password fields have the same width
     marginBottom: 15,
     alignItems: 'center',
   },
@@ -78,13 +124,35 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: '60%',
+    width: '60%', // Same width for both email and password input fields
     borderColor: '#fff',
     borderWidth: 1,
     borderRadius: 5,
     color: '#fff',
     paddingHorizontal: 10,
     backgroundColor: '#1e1e1e',
+  },
+  passwordContainer: {
+    position: 'relative', 
+    width: '60%', 
+  },
+  passwordInput: {
+    height: 40, 
+    width: '100%', 
+    paddingRight: 35, 
+    backgroundColor: '#1e1e1e', 
+    color: '#fff', 
+    borderColor: '#fff', 
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  iconContainer: {
+    position: 'absolute',
+    right: 10, // Align to the right of the input box
+    top: '50%', // Vertically center the icon
+    transform: [{ translateY: -10 }], // Adjust to perfect vertical alignment
+    zIndex: 1, // Ensure the icon is on top of the input field
   },
   submitButton: {
     backgroundColor: '#4CAF50',

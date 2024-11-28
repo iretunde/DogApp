@@ -5,6 +5,8 @@ import { useState } from "react";
 import Button from "@/components/Button";
 import ImageViewer from "@/components/ImageViewer";
 import CameraComponent from "@/components/Camera";
+import Logout from "@/components/Logout";
+import ResetPicture from "@/components/ResetPicture"
 import DogID from "@/components/DogID";
 import { predictBreed } from "@/api";
 
@@ -31,12 +33,17 @@ export default function Camera() {
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
     }
+
   };
 
   const handlePhotoCapture = (photo: any) => {
     setSelectedImage(photo.uri);
     setShowCamera(false);
   };
+
+  const handleResetPicture = () => {
+    setSelectedImage(undefined)
+  }
 
   const uploadImage = async () => {
     if (!selectedImage) return;
@@ -109,3 +116,4 @@ export default function Camera() {
     </View>
   );
 }
+

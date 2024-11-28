@@ -1,23 +1,40 @@
-import React from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';  // Import the useRouter hook from expo-router
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase';
+import Ionicons from '@expo/vector-icons/Ionicons'; // Correct import for Ionicons
 
 export default function Register() {
-  const router = useRouter();  // Initialize the router
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isPasswordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
 
-  // Define the onPress handler to navigate to home screen
-  const handleSubmit = () => {
-    router.push('/(tabs)/home');  
-  };
+  const handleSubmit = async () => {
+    if (!email.trim()) {
+      Alert.alert('Validation Error', 'Email address cannot be empty.');
+      return;
+    }
+    if (!password.trim()) {
+      Alert.alert('Validation Error', 'Password cannot be empty.');
+      return;
+    }
 
-  // Define the onPress handler for navigating to the login screen
-  const handleNavigateToLogin = () => {
-    router.push('/');  // Navigate to login.tsx (index in the auth folder)
-  };
-
-  // Define the onPress handler for navigating to the forgot password screen
-  const handleNavigateToForgotPassword = () => {
-    router.push('/(auth)/forgot-password');  // Navigate to forgot-password.tsx in the auth folder
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      Alert.alert('Success', 'User registered successfully!');
+      router.push('/(tabs)/home'); // Navigate to the login screen
+    } catch (error: any) {
+      let errorMessage = 'Error: unknown error';
+      
+      // Check if the error message matches the invalid email error from Firebase
+      if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Error: invalid email given';
+      }
+      console.log(error)
+      Alert.alert('Error', errorMessage); // Show error message
+    }
   };
 
   return (
@@ -25,36 +42,49 @@ export default function Register() {
       <Text style={styles.heading}>Register below!</Text>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>Name</Text>
-        <TextInput placeholder="Enter your name" style={styles.input} />
-      </View>
-
-      <View style={styles.inputGroup}>
         <Text style={styles.label}>Email</Text>
-        <TextInput placeholder="Enter your email" style={styles.input} keyboardType="email-address" />
+        <TextInput
+          placeholder="Enter your email"
+          style={styles.input}
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
       </View>
 
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Password</Text>
-        <TextInput placeholder="Enter your password" style={styles.input} secureTextEntry />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            placeholder="Enter your password"
+            style={styles.passwordInput}
+            secureTextEntry={!isPasswordVisible} // Toggle visibility
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => setPasswordVisible(!isPasswordVisible)}
+          >
+            <Ionicons
+              name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'} // Use Ionicons for the eye icon
+              size={20}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Submit</Text>
+        <Text style={styles.submitButtonText}>Register</Text>
       </TouchableOpacity>
 
-      {/* Add TouchableOpacity for navigation to the Login screen */}
-      <TouchableOpacity onPress={handleNavigateToLogin}>
+      <TouchableOpacity onPress={() => router.push('/')}>
         <Text style={styles.registerText}>Have an account? Login here!</Text>
-      </TouchableOpacity>
-
-      {/* Add TouchableOpacity for navigating to the Forgot Password screen */}
-      <TouchableOpacity onPress={handleNavigateToForgotPassword}>
-        <Text style={styles.registerText}>Forgot password?</Text>
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -71,7 +101,7 @@ const styles = StyleSheet.create({
   },
   inputGroup: {
     flexDirection: 'row',
-    width: '80%',
+    width: '80%', // Ensure email and password fields have the same width
     marginBottom: 15,
     alignItems: 'center',
   },
@@ -83,13 +113,35 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: '60%',
+    width: '60%', // Same width for both email and password input fields
     borderColor: '#fff',
     borderWidth: 1,
     borderRadius: 5,
     color: '#fff',
     paddingHorizontal: 10,
     backgroundColor: '#1e1e1e',
+  },
+  passwordContainer: {
+    position: 'relative', 
+    width: '60%', 
+  },
+  passwordInput: {
+    height: 40, 
+    width: '100%', 
+    paddingRight: 35, 
+    backgroundColor: '#1e1e1e', 
+    color: '#fff', 
+    borderColor: '#fff', 
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  iconContainer: {
+    position: 'absolute',
+    right: 10, // Align to the right of the input box
+    top: '50%', // Vertically center the icon
+    transform: [{ translateY: -10 }], // Adjust to perfect vertical alignment
+    zIndex: 1, // Ensure the icon is on top of the input field
   },
   submitButton: {
     backgroundColor: '#4CAF50',
@@ -108,6 +160,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: '#fff',
     fontSize: 14,
-    textDecorationLine: 'underline', // Makes it look like a clickable link
+    textDecorationLine: 'underline',
   },
 });

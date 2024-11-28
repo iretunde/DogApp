@@ -1,29 +1,43 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
-import { useRouter } from 'expo-router'; // Import the useRouter hook from expo-router
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../../firebase'; 
 
 export default function ForgotPassword() {
-  const router = useRouter(); // Initialize the router
-  const [isModalVisible, setModalVisible] = useState(false); // State to control the modal visibility
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [isInputValid, setInputValid] = useState(false);
 
-  // Define the onPress handler for navigating to the login screen
-  const handleNavigateToLogin = () => {
-    router.push('/');  
+  const handleInputChange = (text: string) => {
+    setEmail(text);
+    setInputValid(text.trim().length > 0); // Check if the input field is non-empty
   };
 
-  // Define the onPress handler for navigating to the register screen
-  const handleNavigateToRegister = () => {
-    router.push('/(auth)/register');  
-  };
+  const handleSubmit = async () => {
+    try {
+      await sendPasswordResetEmail(auth, email);
 
-  // Define the onPress handler for showing the modal
-  const handleSubmit = () => {
-    setModalVisible(true); // Show the modal when the Submit button is clicked
-  };
+      const successMessage = 'If you have a registered email with us, you will receive a password reset email shortly!';
 
-  // Define the onPress handler for closing the modal
-  const closeModal = () => {
-    setModalVisible(false); // Close the modal
+      // Show success message depending on the platform
+      if (Platform.OS === 'web') {
+        window.alert(successMessage); // For web use window.alert
+      } else {
+        Alert.alert('Success', successMessage); // For mobile use Alert.alert
+      }
+
+      router.push('/'); // Navigate back to login screen
+    } catch (error: any) {
+      const errorMessage = "Invalid email given.";
+
+      // Show error message depending on the platform
+      if (Platform.OS === 'web') {
+        window.alert(errorMessage); // For web use window.alert
+      } else {
+        Alert.alert('Error', errorMessage); // For mobile use Alert.alert
+      }
+    }
   };
 
   return (
@@ -35,40 +49,22 @@ export default function ForgotPassword() {
           placeholder="Enter your email address"
           style={styles.input}
           keyboardType="email-address"
+          value={email}
+          onChangeText={handleInputChange}
         />
       </View>
 
-      {/* Green Submit Button */}
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+      <TouchableOpacity
+        style={[styles.submitButton, !isInputValid && styles.disabledButton]} // Apply disabled styling when invalid
+        onPress={handleSubmit}
+        disabled={!isInputValid} // Disable button if input is empty
+      >
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
 
-      {/* Add TouchableOpacity for navigation to the Login screen */}
-      <TouchableOpacity onPress={handleNavigateToLogin}>
+      <TouchableOpacity onPress={() => router.push('/')}>
         <Text style={styles.linkText}>Have an account? Login here!</Text>
       </TouchableOpacity>
-
-      {/* Add TouchableOpacity for navigation to the Register screen */}
-      <TouchableOpacity onPress={handleNavigateToRegister}>
-        <Text style={styles.linkText}>Register now</Text>
-      </TouchableOpacity>
-
-      {/* Modal for the confirmation message */}
-      <Modal
-        visible={isModalVisible}
-        animationType="fade"
-        transparent={true}
-        onRequestClose={closeModal}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Thanks for submitting. We will add the relevant authentication functionality later.</Text>
-            <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
-              <Text style={styles.modalButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
@@ -76,7 +72,7 @@ export default function ForgotPassword() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ADD8E6', // Same background color as the login screen
+    backgroundColor: '#ADD8E6',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -85,15 +81,15 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: '#fff',
     marginBottom: 40,
-    fontWeight: 'bold', // Make the heading bold
+    fontWeight: 'bold',
   },
   inputGroup: {
-    width: '50%',  // Center the input group horizontally
+    width: '50%',
     marginBottom: 20,
   },
   input: {
     height: 40,
-    width: '100%', // Input takes full width of the container
+    width: '100%',
     borderColor: '#fff',
     borderWidth: 1,
     borderRadius: 5,
@@ -102,11 +98,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#1e1e1e',
   },
   submitButton: {
-    backgroundColor: '#4CAF50', // Green background for submit button
+    backgroundColor: '#4CAF50',
     paddingVertical: 10,
     paddingHorizontal: 40,
     borderRadius: 5,
-    marginTop: 20,
     alignItems: 'center',
   },
   submitButtonText: {
@@ -114,41 +109,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  disabledButton: {
+    backgroundColor: '#A9A9A9', // Greyed-out button for disabled state
+  },
   linkText: {
     marginTop: 20,
     color: '#fff',
     fontSize: 14,
-    textDecorationLine: 'underline', // Makes it look like a clickable link
+    textDecorationLine: 'underline',
     textAlign: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background for the modal
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#000',
-  },
-  modalButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  modalButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
