@@ -20,7 +20,7 @@ export const editUserAvatar = async (userId, avatarFile) => {
     formData,
     {
       headers: { "Content-Type": "multipart/form-data" },
-    }
+    },
   );
   return data.user;
 };
@@ -42,6 +42,11 @@ export const predictBreed = async (imageFile) => {
 export const fetchUserProfile = async () => {
   const response = await api.get("/users/1");
   return response.data.user;
+};
+
+export const getLeaderboard = async () => {
+  const { data } = await axios.get(`${url}/users/leaderboard`);
+  return data.leaderboard;
 };
 // get user function
 // then access the user profile
