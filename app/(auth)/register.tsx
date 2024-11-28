@@ -89,7 +89,7 @@ export default function Register() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ADD8E6',
+    backgroundColor: '#111827',
     justifyContent: 'center',
     alignItems: 'center',
   },

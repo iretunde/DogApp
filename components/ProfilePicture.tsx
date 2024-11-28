@@ -1,24 +1,64 @@
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Platform } from "react-native";
 import { Image } from "expo-image";
 import { AntDesign } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
+import { editUserAvatar } from "@/api";
 
 type Props = {
   imageUri: string;
-  onEditPress: () => void;
+  onEditPress: (newAvatarUrl: string) => void;
 };
 
 export default function ProfilePicture({ imageUri, onEditPress }: Props) {
+  const [isUploading, setIsUploading] = useState(false);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+      aspect: [1, 1],
+    });
+
+    if (!result.canceled) {
+      await uploadImage(result.assets[0].uri);
+    }
+  };
+
+  const uploadImage = async (uri: string) => {
+    setIsUploading(true);
+    try {
+      const imageFile = Platform.OS === "web" 
+        ? await (await fetch(uri)).blob()
+        : {
+            uri: Platform.OS === "ios" ? uri.replace("file://", "") : uri,
+            type: "image/jpeg",
+            name: "avatar.jpg",
+          };
+
+      const updatedUser = await editUserAvatar(1, imageFile);
+      onEditPress(updatedUser.avatar_url);
+    } catch (error: any) {
+      console.error(error);
+      alert("Failed to update profile picture: " + error.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* <View style={styles.imageContainer}> */}
       <Image
         source={{ uri: imageUri }}
         style={styles.image}
         contentFit="cover"
       />
-      {/* </View> */}
-      <TouchableOpacity style={styles.editButton} onPress={onEditPress}>
-        <AntDesign name="edit" size={20} color="white" />
+      <TouchableOpacity 
+        style={[styles.editButton, isUploading && styles.editButtonDisabled]}
+        onPress={pickImage}
+        disabled={isUploading}
+      >
+        <AntDesign name={isUploading ? "loading1" : "edit"} size={20} color="white" />
       </TouchableOpacity>
     </View>
   );
@@ -29,16 +69,7 @@ const styles = StyleSheet.create({
     position: "relative",
     width: 100,
     height: 100,
-    // borderWidth: 2,
   },
-  // imageContainer: {
-  //   position: "relative",
-  //   width: 100,
-  //   height: 100,
-  //   borderWidth: 2,
-  //   borderColor: "#F00",
-  //   borderRadius: 50,
-  // },
   image: {
     width: 100,
     height: 100,
@@ -56,4 +87,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  editButtonDisabled: {
+    backgroundColor: "#A5D6A7",
+  }
 });
