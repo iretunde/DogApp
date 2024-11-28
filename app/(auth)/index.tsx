@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert } from 'reac
 import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
-import Ionicons from '@expo/vector-icons/Ionicons'; /
+import Ionicons from '@expo/vector-icons/Ionicons'; 
 
 
 
