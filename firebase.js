@@ -1,21 +1,24 @@
-// Import the functions you need from the SDKs you need
+// Import necessary functions from the Firebase SDK
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth"; // Import getAuth for authentication
+import { getAuth } from "firebase/auth";
+import dotenv from "dotenv";
 
-// Your web app's Firebase configuration
+// Initialize dotenv to load environment variables
+dotenv.config();
+
+// Your web app's Firebase configuration using environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyDDcoRh_FxIe3IpLmegApjS02XtnmwEauY",
-  authDomain: "dogappauthentication.firebaseapp.com",
-  projectId: "dogappauthentication",
-  storageBucket: "dogappauthentication.firebasestorage.app",
-  messagingSenderId: "862222697582",
-  appId: "1:862222697582:web:f8cecdf9daded2d4b4527f"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Authentication and export it
-const auth = getAuth(app); // Use getAuth to initialize the authentication instance
-
+const auth = getAuth(app);
 export { auth };
