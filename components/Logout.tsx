@@ -12,7 +12,7 @@ export default function Logout() {
 
   return (
     <TouchableOpacity onPress={handleLogoutPress} style={styles.logoutButton}>
-      <Ionicons name="log-out-outline" size={24} color="black" />
+      <Ionicons name="log-out-outline" size={24} color="white" />
     </TouchableOpacity>
   );
 }

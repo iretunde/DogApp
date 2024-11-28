@@ -72,7 +72,7 @@ export default function ForgotPassword() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ADD8E6',
+    backgroundColor: '#111827',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
