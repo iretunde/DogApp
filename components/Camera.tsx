@@ -3,12 +3,14 @@ import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState, useRef } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import Button from './Button';
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = {
-  onPhotoCapture: (photo: any) => void;
+  onPhotoCapture: (photo: any) => void,
+  removeCamera: () => void
 };
 
-export default function CameraComponent({ onPhotoCapture }: Props) {
+export default function CameraComponent({ onPhotoCapture, removeCamera }: Props) {
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<any>(null);
@@ -17,6 +19,7 @@ export default function CameraComponent({ onPhotoCapture }: Props) {
   if (!permission) {
     return <View />;
   }
+
 
   if (!permission.granted) {
     return (
@@ -54,6 +57,12 @@ export default function CameraComponent({ onPhotoCapture }: Props) {
         facing={facing}
         ref={cameraRef}
       >
+        {/* Top-left Icon */}
+        <TouchableOpacity style={styles.topLeftButton}>
+          <Ionicons name="arrow-back-outline" color="white" size={24} onPress={removeCamera} />
+        </TouchableOpacity>
+
+        {/* Bottom Controls */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <AntDesign name="retweet" size={44} color="black" />
@@ -96,5 +105,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     marginBottom: 20,
+  },
+  topLeftButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    backgroundColor: 'transparent', // Optional, adjust as needed
+    padding: 10,
   },
 });

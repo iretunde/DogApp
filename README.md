@@ -1,50 +1,121 @@
-# Welcome to your Expo app 👋
+# Dog Identifier App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Overview
+The Dog Identifier App is a powerful and user-friendly application designed to identify dog breeds from photos. By leveraging cutting-edge machine learning, cloud services, and a modern app interface, users can upload photos of dogs to quickly and accurately determine their breed. The app is available on mobile and web, thanks to the versatile technologies used in its development.
 
-## Get started
+---
 
-1. Install dependencies
+## Technologies Used
 
+### Backend:
+- **SQL**: Used for managing user and dog image information.
+- **Python**: For developing machine learning models and API logic.
+- **Node.js**: Backend logic and endpoint creation.
+- **AWS**: Storing user-uploaded images (S3 bucket).
+- **FastAPI**: API creation to make the model callable.
+- **PyTorch**: Machine learning framework used to train the CNN model.
+- **Docker**: Containerizing the model for deployment.
+- **Hugging Face**: Hosting the trained ML model for public access.
+
+### Frontend:
+- **React Native**: Cross-platform development for mobile and web apps.
+- **TypeScript**: Typed language for robust development.
+- **Firebase**: User authentication and management.
+- **Expo**: Simplified testing and deployment of the React Native app.
+- **Tailwind**: Styling the frontend components.
+
+---
+
+## Machine Learning Model
+
+### Dataset
+We used a dataset containing tens of thousands of dog photos from [Kaggle](https://www.kaggle.com/). 
+
+### Training Process
+- **Framework**: PyTorch.
+- **Architecture**: Convolutional Neural Network (CNN).
+- **Training Environment**: Google Colab for compute resources.
+- **Performance**: Achieved over **90% accuracy** on validation data.
+
+### Deployment
+- Made the trained model callable via API using **FastAPI**.
+- Containerized the API with **Docker**.
+- Deployed the containerized model to **Hugging Face** for accessibility.
+
+---
+
+## Backend
+
+### Database
+- Created a **PostgreSQL** database to store:
+  - User information.
+  - Dog images and related data.
+
+### APIs
+- Developed endpoints using **Node.js**, **Axios**, and **Express**.
+- Hosted the backend services on **Supabase** and **Render**.
+
+### Image Storage
+- User-uploaded images (dog photos and avatars) are stored in an **AWS S3 bucket**.
+- Integrated a backend pipeline for seamless image storage and retrieval.
+
+---
+
+## App
+
+### Development
+- Built using **React Native**, enabling cross-platform support for mobile and web.
+- Tested locally using **Expo**, which allowed real-time updates during development.
+
+### Authentication
+- Implemented **Firebase Authentication** to:
+  - Manage user sign-ups and logins.
+  - Store user emails and unique identifiers.
+  - Link users to their respective database entries.
+
+### Frontend Features
+- Used **TypeScript** for creating robust and type-safe component files.
+- Styled with **Tailwind CSS**, providing responsive and modern UI elements.
+
+---
+
+## How It Works
+
+1. **User Onboarding**:
+   - Users sign up and log in using **Firebase Authentication**.
+2. **Photo Upload**:
+   - Users upload a dog photo via the app.
+   - The image is processed and stored in an **AWS S3 bucket**.
+3. **Breed Identification**:
+   - The uploaded photo is sent to the model API hosted on **Hugging Face**.
+   - The API returns the identified breed, which is displayed in the app.
+4. **Personalized Dashboard**:
+   - Users can view a history of their uploaded photos and identified breeds.
+
+---
+
+## Deployment
+- **Backend**: Hosted on **Supabase** and **Render**.
+- **Frontend**: Built with **Expo** for mobile and web platforms.
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Node.js
+- Expo CLI
+- Firebase project setup
+- AWS credentials for S3 bucket
+
+### Installation
+
+1. Clone the repository:
    ```bash
-   npm install
-   ```
+   git clone https://github.com/your-username/dog-identifier-app.git
 
-2. Start the app
+2. Install dependencies:
+-  npm install
 
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+3. Run the app:
+- npm startnpm

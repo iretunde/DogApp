@@ -42,6 +42,11 @@ export default function Camera() {
     setSelectedImage(photo.uri);
     setShowCamera(false);
   };
+  
+  const hideCamera = () => {
+    setShowCamera(false);
+    
+  }
 
   const handleResetPicture = () => {
     setSelectedImage(undefined)
@@ -70,7 +75,7 @@ export default function Camera() {
   };
 
   if (showCamera) {
-    return <CameraComponent onPhotoCapture={handlePhotoCapture} />;
+    return <CameraComponent onPhotoCapture={handlePhotoCapture} removeCamera={hideCamera} />;
   }
 
   return (
