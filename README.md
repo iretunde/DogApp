@@ -40,7 +40,7 @@ We used a dataset containing tens of thousands of dog photos from [Kaggle](https
 ### Deployment
 - Made the trained model callable via API using **FastAPI**.
 - Containerized the API with **Docker**.
-- Deployed the containerized model to **Hugging Face** for accessibility.
+- Deployed the containerized model to [Hugging Face](https://huggingface.co/spaces/Sorei9240/dog-id-api/tree/main) for accessibility.
 
 ---
 
@@ -52,7 +52,7 @@ We used a dataset containing tens of thousands of dog photos from [Kaggle](https
   - Dog images and related data.
 
 ### APIs
-- Developed endpoints using **Node.js**, **Axios**, and **Express**.
+- Developed [endpoints](https://github.com/CandyNorth/dog-app-backend) using **Node.js**, **Axios**, and **Express**.
 - Hosted the backend services on **Supabase** and **Render**.
 
 ### Image Storage
